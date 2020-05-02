@@ -1,0 +1,54 @@
+{
+    "description": "Arduino library to access Adafruit IO.", 
+    "repository": {
+        "url": "https://github.com/adafruit/Adafruit_IO_Arduino", 
+        "type": "git"
+    }, 
+    "platforms": [
+        "atmelavr", 
+        "atmelmegaavr", 
+        "atmelsam", 
+        "espressif32", 
+        "espressif8266", 
+        "gd32v", 
+        "infineonxmc", 
+        "intel_arc32", 
+        "kendryte210", 
+        "microchippic32", 
+        "nordicnrf51", 
+        "nordicnrf52", 
+        "ststm32", 
+        "ststm8", 
+        "teensy", 
+        "timsp430"
+    ], 
+    "export": {
+        "exclude": [
+            "extras", 
+            "docs", 
+            "tests", 
+            "test", 
+            "*.doxyfile", 
+            "*.pdf"
+        ], 
+        "include": null
+    }, 
+    "authors": [
+        {
+            "maintainer": true, 
+            "name": "Adafruit", 
+            "url": null, 
+            "email": "adafruitio@adafruit.com"
+        }
+    ], 
+    "keywords": [
+        "communication"
+    ], 
+    "id": 714, 
+    "name": "Adafruit IO Arduino", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "version": "3.4.0", 
+    "homepage": null
+}
