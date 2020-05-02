@@ -1,19 +1,6 @@
 // NOTES
-// SPI and I²C pins for D1 Mini
-// https://steve.fi/hardware/d1-pins/
 // SDA => D2
 // SCL => D1
-
-// SPI pins
-// Clock (sck) => D5
-// Data-In (mosi) => D7
-// Chip-Select (cs) => D8
-// Command/Data selection (a0)
-
-// M-CLK => D5
-// MISO => D6
-// MOSI => D7
-// SPI Bus SS (CS) => D8
 
 #include <Arduino.h>
 
