@@ -27,6 +27,8 @@ void updateMinHumid(AdafruitIO_Data *data);
 void updateMaxHumid(AdafruitIO_Data *data);
 
 U8G2_SH1106_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0,D1,D2); // full buffer size
+const uint16_t FRAME_RATE = 1000; // frames per second
+const uint16_t FRAME_TIME_MILLIS = 1000./FRAME_RATE; // time per frame in milis.
 
 // init two presure / humid sensors we use
 Adafruit_BME280 RightBME; 
@@ -53,8 +55,9 @@ void setup()
   // setup screen, say hello
   u8g2.begin(); 
   u8g2.clearBuffer();
-  u8g2.setFont(u8g2_font_artosserif8_8r);
-  u8g2.drawStr(0,20,"Hello World!");
+  // u8g2.setFont(u8g2_font_artosserif8_8r);
+  u8g2.setFont(u8g2_font_5x8_mr ); 
+  u8g2.drawStr(0,8,"bioterio");
   u8g2.sendBuffer();
   delay(1000);
 
@@ -65,8 +68,7 @@ void setup()
   Serial.println("");
 
   // setting up the sensors ====================================================
-  u8g2.clearBuffer();
-  u8g2.drawStr(0,20,"Sensor searching...");
+  u8g2.drawStr(0,16,"Sensor searching...");
   u8g2.sendBuffer();
 
   Serial.print("Looking for right humid. sensor...");
@@ -86,8 +88,8 @@ void setup()
   Serial.println("found!");
 
   // connect to io.adafruit.com
-  u8g2.clearBuffer();
-  u8g2.drawStr(0,20,"Ada connecting...");
+  u8g2.setCursor(0,24);
+  u8g2.print("Ada connecting");
   u8g2.sendBuffer();
 
   Serial.print("Connecting to Adafruit IO");
@@ -98,8 +100,10 @@ void setup()
   // wait for a connection
   while (io.status() < AIO_CONNECTED)
   {
+    u8g2.print(".");
+    u8g2.sendBuffer();
     Serial.print(".");
-    delay(300);
+    delay(250);
   }
   // we are connected
   Serial.println();
@@ -113,19 +117,36 @@ void setup()
   digitalWrite(D0, 1); // relais is active low
   pinMode(D5, INPUT); // button pin
 
-  u8g2.begin();
 }
 
 void loop()
 {
   io.run(); // required for all sketches.
 
-  // picture loop
-  // u8g.firstPage();  
-  // do {
-  //   draw();
-  // } while( u8g.nextPage() );
-  
+  EVERY_N_MILLISECONDS(FRAME_TIME_MILLIS) // print serial values...
+  {
+    RightBME.takeForcedMeasurement();
+    LeftBME.takeForcedMeasurement();      
+
+    u8g2.clearBuffer();
+    u8g2.setCursor(0,8);
+    u8g2.print("      Left Right Min");
+    u8g2.setCursor(0,16);
+    u8g2.print(" Temp ");
+    u8g2.print(LeftBME.readTemperature(), 1);
+    u8g2.print(" ");
+    u8g2.print(RightBME.readTemperature(), 1);
+    u8g2.print(" ");
+
+    u8g2.setCursor(0,24);
+    u8g2.print("Humid ");
+    u8g2.print(LeftBME.readHumidity(), 1);
+    u8g2.print(" ");
+    u8g2.print(RightBME.readHumidity(), 1);
+    u8g2.print(" ");
+
+    u8g2.sendBuffer();
+  }
 
   EVERY_N_SECONDS(5) // print serial values...
   {
@@ -179,11 +200,6 @@ void loop()
     }
   }
 }
-
-// void draw() {
-//   // u8g.setFont(u8g_font_unifont);
-//   // u8g.drawStr(0, 1, "H!");
-// }
 
 void print_values_serial(Adafruit_BME280 *bmeSensor)
 {
