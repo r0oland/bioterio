@@ -9,12 +9,21 @@
 #include <Wire.h>
 #include <SPI.h>
 
-// since latest version (28.04.2020) code no longer compiles...this libary version
-// seems to be working though...
 #include "..\lib\Adafruit IO Arduino\src\AdafruitIO_WiFi.h"
-#include "..\lib\every_n_timer\every_n_timer.h" // required for every N seconds thing
 #include <Adafruit_BME280.h>
-// #include <FastLED.h> 
+
+#include <FastLED.h> 
+#include "..\lib\every_n_timer\every_n_timer.h" // required for every N seconds thing
+
+FASTLED_USING_NAMESPACE
+// defin LED parameters
+#define DATA_PIN D5
+#define LED_TYPE WS2811
+#define COLOR_ORDER GRB
+#define NUM_LEDS 10 
+#define BRIGHTNESS 25
+#define FRAMES_PER_SECOND 30
+CRGB leds[NUM_LEDS]; // contains led info, this we set first, the we call led show
 
 #include <U8g2lib.h> // for OLED screen
 
@@ -25,6 +34,9 @@ void print_values_serial(Adafruit_BME280 *bmeSensor);
 void send_aio_values(Adafruit_BME280 *insideSensor, Adafruit_BME280 *outsideSensor);
 void updateMinHumid(AdafruitIO_Data *data);
 void updateMaxHumid(AdafruitIO_Data *data);
+void setup_leds();
+void set_led_status(uint8_t status);
+void pulse_leds(uint8_t nPulses, uint8_t pulseSpeed);
 
 U8G2_SH1106_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0,D1,D2); // full buffer size
 const uint16_t FRAME_RATE = 1000; // frames per second
@@ -66,6 +78,11 @@ void setup()
     ; // wait for serial monitor to open
   Serial.println("");
   Serial.println("");
+
+  Serial.print("Setting up leds...");
+  setup_leds();
+  Serial.println("done!");
+  set_led_status(1); // working
 
   // setting up the sensors ====================================================
   u8g2.drawStr(0,16,"Sensor searching...");
@@ -115,7 +132,7 @@ void setup()
   // setup my own IO pins
   pinMode(D0, OUTPUT); // relais for fan and humidifier
   digitalWrite(D0, 1); // relais is active low
-  pinMode(D5, INPUT); // button pin
+  // pinMode(D5, INPUT); // button pin
 
 }
 
@@ -240,4 +257,76 @@ void updateMaxHumid(AdafruitIO_Data *data)
   minRequiredOffHumid = data->toFloat();
   Serial.print("New maximum Humidity: ");
   Serial.println(minRequiredOffHumid);
+}
+
+void setup_leds()
+{
+  // tell FastLED about the LED strip configuration
+  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+
+  // set master brightness control
+  FastLED.setBrightness(BRIGHTNESS);
+
+  FastLED.clear();
+  FastLED.show();
+  for (int led = 0; led < NUM_LEDS; led++)
+  {
+    leds[led] = CRGB::White;
+    delay(200);
+    FastLED.show();
+  }
+  delay(200);
+  pulse_leds(3, 5);
+  FastLED.clear();
+  FastLED.show();
+}
+
+void pulse_leds(uint8_t nPulses, uint8_t pulseSpeed)
+{
+  uint8_t ledFade = 255;      // start with LEDs off
+  int8_t additionalFade = -5; // start with LEDs getting brighter
+  uint8_t iPulse = 0;
+
+  while (iPulse < nPulses)
+  {
+    for (uint8_t iLed = 0; iLed < NUM_LEDS; iLed++)
+    {
+      leds[iLed].setRGB(255, 255, 255);
+      leds[iLed].fadeLightBy(ledFade);
+    }
+    FastLED.show();
+    ledFade = ledFade + additionalFade;
+    // reverse the direction of the fading at the ends of the fade:
+    if (ledFade == 0 || ledFade == 255)
+      additionalFade = -additionalFade;
+    if (ledFade == 255)
+      iPulse++;
+    delay(pulseSpeed); // This delay sets speed of the fade. I usually do from 5-75 but you can always go higher.
+  }
+}
+
+void set_led_status(uint8_t status)
+{
+  // first led in array displays overall status
+  // (0 = all good, 1 = working, 2 = error)
+  switch (status)
+  {
+  case 0:
+    leds[0].setRGB(0, 255, 0); // all good = green
+    FastLED.show();
+    break;
+  case 1:
+    leds[0].setRGB(200, 165, 0); // working == orange
+    FastLED.show();
+    break;
+  case 2:
+    leds[0].setRGB(255, 0, 0); // error == red
+    FastLED.show();
+    break;
+
+  default:
+    leds[0].setRGB(255, 0, 0);
+    FastLED.show();
+    break;
+  }
 }
