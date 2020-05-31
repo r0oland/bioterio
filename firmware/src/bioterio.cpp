@@ -12,7 +12,7 @@
 // for OLED screen
 #include <U8g2lib.h> 
 U8G2_SH1106_128X64_NONAME_F_SW_I2C u8g2(U8G2_R0,D1,D2); // full buffer size
-const uint16_t FRAME_RATE = 5; // frames per second
+const uint16_t FRAME_RATE = 3; // frames per second
 const uint16_t FRAME_TIME_MILLIS = 1000./FRAME_RATE; // time per frame in milis.
 const uint8_t LINE_SPACING = 8; // we can print an new, non-overlapping line
 
@@ -29,7 +29,6 @@ FASTLED_USING_NAMESPACE
 #define COLOR_ORDER GRB
 #define NUM_LEDS 10 
 #define BRIGHTNESS 25
-#define FRAMES_PER_SECOND 30
 CRGB leds[NUM_LEDS]; // contains led info, this we set first, the we call led show
 
 // hardware interfacing
@@ -39,6 +38,7 @@ CRGB leds[NUM_LEDS]; // contains led info, this we set first, the we call led sh
 // adafruit IO and sensors
 #include "..\lib\Adafruit IO Arduino\src\AdafruitIO_WiFi.h"
 #include <Adafruit_BME280.h>
+#include <RunningMedian.h> // used for smoother data...
 
 // init two presure / humid sensors we use
 Adafruit_BME280 RightBME; 
@@ -56,14 +56,25 @@ AdafruitIO_Feed *smallTerraTemp = io.feed("a_small_tera_temp");
 AdafruitIO_Feed *minHumidFeed = io.feed("a_min_humid");
 AdafruitIO_Feed *maxHumidFeed = io.feed("a_max_humid");
 
+const uint16_t AIO_UPDADTE_TIME = 20; // update AIO every n seconds
+
+
 // setup time
 #include <time.h>
 const int8_t TIME_ZONE = -2; // central european time
 
-
 uint8_t humidRunning = false;
 float minRequiredOnHumid = 0;  // keep at least this much humidity
 float minRequiredOffHumid = 0; // humid until we reach this value
+
+// calculate running medians for humids and temps
+// number of samples = frame rate (== sampling rate) * update interval 
+// factor 2 for extra smoothing...
+RunningMedian LhsHumid = RunningMedian(AIO_UPDADTE_TIME*FRAME_RATE*2);
+RunningMedian LhsTemp  = RunningMedian(AIO_UPDADTE_TIME*FRAME_RATE*2);
+RunningMedian RhsHumid = RunningMedian(AIO_UPDADTE_TIME*FRAME_RATE*2);
+RunningMedian RhsTemp  = RunningMedian(AIO_UPDADTE_TIME*FRAME_RATE*2);
+uint32_t lastMillies = 0;
 
 // function declarations...
 void print_values_serial(Adafruit_BME280 *bmeSensor);
@@ -77,13 +88,14 @@ void pulse_leds(uint8_t nPulses, uint8_t pulseSpeed);
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void setup()
 {
+  uint8_t thisLine = 1;
   // setup screen, say hello
   u8g2.begin(); 
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_5x8_mr); 
-  u8g2.setCursor(0,LINE_SPACING*1); // 1st line using u8g2_font_5x8_mr font
+  u8g2.setCursor(0,LINE_SPACING*thisLine++); // start at first line, then increment
   u8g2.print("bioterio 0.2");
-  u8g2.setCursor(0,LINE_SPACING*8); // 1st line using u8g2_font_5x8_mr font
+  u8g2.setCursor(0,LINE_SPACING*8); // print signature in last line
   u8g2.print("Laser Hannes 2020");
   u8g2.sendBuffer();
   delay(250);
@@ -91,41 +103,56 @@ void setup()
   Serial.begin(921600);
   while (!Serial)
     ; // wait for serial monitor to open
-  Serial.println("");
-  Serial.println("");
 
-  Serial.print("Setting up leds...");
+  // setting up leds ===========================================================
+  u8g2.setCursor(0,LINE_SPACING*thisLine++); 
+  u8g2.print("Setting up leds...");
+  u8g2.sendBuffer();
   setup_leds();
-  Serial.println("done!");
+  u8g2.print("done!");
   set_led_status(1); // working
 
   // setting up the sensors ====================================================
-  u8g2.setCursor(0,16); // 2nd line
+  u8g2.setCursor(0,LINE_SPACING*thisLine++); 
   u8g2.print("Sensor searching...");
   u8g2.sendBuffer();
 
-  Serial.print("Looking for right humid. sensor...");
   while (!RightBME.begin(RIGHT_ADDRESS, &Wire))
   {
-    Serial.println("Could not find right sensor, check wiring!");
     delay(2500);
   }
-  Serial.println("found!");
-
-  Serial.print("Looking for left humid. sensor...");
   while (!LeftBME.begin(LEFT_ADDDRESS, &Wire))
   {
-    Serial.println("Could not find left sensor, check wiring!");
     delay(2500);
   }
-  Serial.println("found!");
+  u8g2.print("done!");
 
-  // connect to io.adafruit.com
-  u8g2.setCursor(0,LINE_SPACING*3); 
+  u8g2.setCursor(0,LINE_SPACING*thisLine++); 
+  u8g2.print("Sensor setup...");
+  u8g2.sendBuffer();
+  // see https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf 
+  // for datasheet of sensor
+  RightBME.setSampling(Adafruit_BME280::MODE_NORMAL,
+                Adafruit_BME280::SAMPLING_X16,  // temperature
+                Adafruit_BME280::SAMPLING_NONE, // pressure
+                Adafruit_BME280::SAMPLING_X16,  // humidity
+                Adafruit_BME280::FILTER_OFF,
+                Adafruit_BME280::STANDBY_MS_0_5);
+
+  LeftBME.setSampling(Adafruit_BME280::MODE_NORMAL,
+                  Adafruit_BME280::SAMPLING_X16,  // temperature
+                  Adafruit_BME280::SAMPLING_NONE, // pressure
+                  Adafruit_BME280::SAMPLING_X16,  // humidity
+                  Adafruit_BME280::FILTER_OFF,
+                  Adafruit_BME280::STANDBY_MS_0_5);
+  // suggested rate is 1Hz (1s)
+  u8g2.print("done!");
+
+  // connect to io.adafruit.com ================================================
+  u8g2.setCursor(0,LINE_SPACING*thisLine++); 
   u8g2.print("Ada connecting");
   u8g2.sendBuffer();
 
-  Serial.print("Connecting to Adafruit IO");
   io.connect(); // WiFi.begin(WIFI_SSID, WIFI_PWD) called here!
   minHumidFeed->onMessage(updateMinHumid);
   maxHumidFeed->onMessage(updateMaxHumid);
@@ -134,77 +161,81 @@ void setup()
   while (io.status() < AIO_CONNECTED)
   {
     u8g2.print(".");
-    Serial.print(".");
     u8g2.sendBuffer();
     delay(500);
   }
   // we are connected
-  u8g2.setCursor(0,LINE_SPACING*4); 
+  u8g2.setCursor(0,LINE_SPACING*thisLine++); 
   u8g2.print(io.statusText());
   u8g2.sendBuffer();
-  Serial.println();
-  Serial.println(io.statusText());
-  // send values already? 
   send_aio_values(&RightBME, &LeftBME);
   // get latest minMax values for humidity from AIO 
   minHumidFeed->get();
   maxHumidFeed->get();
 
   // connect to time server
-  u8g2.setCursor(0,LINE_SPACING*5);
+  u8g2.setCursor(0,LINE_SPACING*thisLine++); 
   u8g2.print("Waiting for time");
-  Serial.print("Waiting for time");
   configTime(TIME_ZONE*3600, 0 , "pool.ntp.org", "time.nist.gov"); // 
   while (!time(nullptr)) {
-    Serial.print(".");
     u8g2.print(".");
     u8g2.sendBuffer();
     delay(500);
   }
-  Serial.println("");
 
   // setup my own IO pins
   pinMode(D0, OUTPUT); // relais for fan and humidifier
   digitalWrite(D0, 1); // relais is active low
 }
 
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 void loop()
 {
   io.run(); // required for all sketches.
 
   EVERY_N_MILLISECONDS(FRAME_TIME_MILLIS) // update display
   {
-    // RightBME.takeForcedMeasurement();
-    // LeftBME.takeForcedMeasurement();      
+    // float currentLhsHumid = LeftBME.readHumidity();
+    // float currentLhsTemp = LeftBME.readTemperature();
+    LhsHumid.add(LeftBME.readHumidity());
+    LhsTemp.add(LeftBME.readTemperature());
+    RhsHumid.add(RightBME.readHumidity());
+    RhsTemp.add(RightBME.readTemperature());
 
+    uint8_t thisLine = 1;
     u8g2.clearBuffer();
-    u8g2.setCursor(0,LINE_SPACING*1);
-    u8g2.print("      Left Right Min");
+    u8g2.setCursor(0,LINE_SPACING*thisLine++); 
+    u8g2.print("      lhs  rhs  min max");
 
-    u8g2.setCursor(0,LINE_SPACING*2);
+    u8g2.setCursor(0,LINE_SPACING*thisLine++); 
     u8g2.print(" Temp ");
-    u8g2.print(LeftBME.readTemperature(), 1);
+    u8g2.print(LhsTemp.getMedian(), 1);
     u8g2.print(" ");
-    u8g2.print(RightBME.readTemperature(), 1);
+    u8g2.print(RhsTemp.getMedian(), 1);
     u8g2.print(" ");
 
-    u8g2.setCursor(0,LINE_SPACING*3);
+    u8g2.setCursor(0,LINE_SPACING*thisLine++); 
     u8g2.print("Humid ");
-    u8g2.print(LeftBME.readHumidity(), 1);
+    u8g2.print(LhsHumid.getMedian(), 1);
     u8g2.print(" ");
-    u8g2.print(RightBME.readHumidity(), 1);
-    u8g2.print("  ");
-    u8g2.print(minRequiredOnHumid, 1);
+    u8g2.print(RhsHumid.getMedian(), 1);
+    u8g2.print(" ");
+    u8g2.print(minRequiredOnHumid, 0);
+    u8g2.print(" ");
+    u8g2.print(minRequiredOffHumid, 0);
 
-    u8g2.setCursor(0,LINE_SPACING*5);
+    u8g2.setCursor(0,LINE_SPACING*thisLine++); 
+    uint32_t thisTime = millis();
+    uint32_t timeDiff = thisTime - lastMillies;
+    lastMillies = millis();
+    u8g2.print(timeDiff);
+
+    thisLine++; // skip one line
+    u8g2.setCursor(0,LINE_SPACING*thisLine++); 
     if (humidRunning)
-    {
       u8g2.print("Humidifier is ON");
-    }
     else
-    {
       u8g2.print("Humidifier is OFF");
-    }
 
     time_t now = time(nullptr);
     u8g2.setCursor(0,LINE_SPACING*8); 
@@ -220,9 +251,6 @@ void loop()
 
   EVERY_N_SECONDS(10) // control humidifier
   {
-    // get latest humidity reading
-    RightBME.takeForcedMeasurement();
-    LeftBME.takeForcedMeasurement();
     float rightHumid = RightBME.readHumidity();
     float leftHumid = LeftBME.readHumidity();
 
@@ -239,13 +267,11 @@ void loop()
     {
       humidRunning = true;
       digitalWrite(D0, 0);
-      Serial.println("Turned ON humidifier");
     }
     else if (humidRunning && humidReached)
     {
       humidRunning = false;
       digitalWrite(D0, 1);
-      Serial.println("Turned OFF humidifier");
     }
   }
 }
@@ -304,10 +330,10 @@ void setup_leds()
   for (int led = 0; led < NUM_LEDS; led++)
   {
     leds[led] = CRGB::White;
-    delay(200);
+    delay(100);
     FastLED.show();
   }
-  delay(200);
+  delay(100);
   pulse_leds(3, 5);
   FastLED.clear();
   FastLED.show();
