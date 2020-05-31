@@ -2,4 +2,5 @@
   (lib (name SparkFun-IC-Conversion)(type Legacy)(uri ${KIPRJMOD}/SparkFun-KiCad/Libraries/SparkFun-IC-Conversion.lib)(options "")(descr ""))
   (lib (name SparkFun-IC-Logic)(type Legacy)(uri ${KIPRJMOD}/SparkFun-KiCad/Libraries/SparkFun-IC-Logic.lib)(options "")(descr ""))
   (lib (name SparkFun-IC-Comms)(type Legacy)(uri ${KIPRJMOD}/SparkFun-KiCad/Libraries/SparkFun-IC-Comms.lib)(options "")(descr ""))
+  (lib (name bioterio_v01-rescue)(type Legacy)(uri ${KIPRJMOD}/bioterio_v01-rescue.lib)(options "")(descr ""))
 )

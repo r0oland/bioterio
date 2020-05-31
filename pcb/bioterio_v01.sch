@@ -759,7 +759,7 @@ RelaisCtrl5V
 Text GLabel 1100 5200 0    50   Input ~ 0
 RelaisCtrl5V
 $Comp
-L wemos_D32:voltage_conv U2
+L bioterio_v01-rescue:voltage_conv-wemos_D32 U2
 U 1 1 5EC9C3D1
 P 4900 4300
 F 0 "U2" H 4875 4815 50  0000 C CNN
