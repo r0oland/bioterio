@@ -24,8 +24,8 @@ void setup(void) {
 
   // u8g2.setFont(u8g2_font_streamline_internet_network_t);
   while (!sht.isConnected()) {
-    Serial.print(".");
-    delay(500);
+    Serial.print("...");
+    delay(250);
   }
   Serial.print("\n");
 }
