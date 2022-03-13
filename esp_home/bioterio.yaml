@@ -1,0 +1,100 @@
+esphome:
+  name: terra
+
+esp8266:
+  board: d1_mini
+
+# Enable logging
+logger:
+  level: DEBUG
+
+# Enable Home Assistant API
+api:
+  password: ""
+
+ota:
+  password: ""
+
+wifi:
+  ssid: "Kassiopeia"
+  password: "SternbilddesNordhimmels"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  # ap:
+  #   ssid: "Terra Fallback Hotspot"
+  #   password: "Ra683jvKEaCg"
+
+# captive_portal:
+
+i2c:
+  # use default HW pins 
+  # sda: 21 
+  # scl: 22
+  scan: false
+
+# sensors =====================================================
+
+sensor:
+  - platform: htu21d
+    temperature:
+      name: "TerraTemp"
+      id: TerraTemp
+      filters:
+        - sliding_window_moving_average:
+            window_size: 10
+            send_every: 60
+    humidity:
+      name: "TerraHumid"
+      id: TerraHumid
+      filters:
+        - sliding_window_moving_average:
+            window_size: 10
+            send_every: 60
+    update_interval: 10s
+
+
+# display and font stuff =====================================================
+font:
+  - file: "fonts/Raleway-Medium.ttf"
+    id: ral_med_15
+    size: 15
+  - file: "fonts/Raleway-Medium.ttf"
+    id: ral_med_20
+    size: 20
+
+graph:
+  # Show bare-minimum auto-ranged graph
+  - id: tempGraph
+    sensor: TerraTemp
+    duration: 6h
+    width: 60
+    height: 40
+    x_grid: 2h
+    border: true
+  - id: humidGraph
+    sensor: TerraHumid
+    duration: 6h
+    width: 60
+    height: 40
+    x_grid: 2h
+    border: true
+
+display:
+  - platform: ssd1306_i2c
+    id: the_display
+    model: "SH1106 128x64"
+    address: 0x3C # default is 0x3C
+    pages:
+    - id: page1
+      lambda: |-
+        it.printf(0, 0, id(ral_med_20), "%.1f C", id(TerraTemp).raw_state);
+        it.printf(64, 0, id(ral_med_20), "%.1f %%", id(TerraHumid).raw_state);
+        it.graph(0, 24, id(tempGraph));
+        it.graph(64, 24, id(humidGraph));
+
+# For example cycle through pages on a timer
+# interval:
+#   - interval: 5s
+#     then:
+#       - display.page.show_next: the_display
+#       - component.update: the_display

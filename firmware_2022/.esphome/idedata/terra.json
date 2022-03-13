@@ -1,0 +1,172 @@
+{
+  "env_name": "terra",
+  "libsource_dirs": [
+    "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\lib",
+    "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra",
+    "C:\\Users\\johan\\.platformio\\lib",
+    "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries"
+  ],
+  "defines": [
+    "PLATFORMIO=50205",
+    "ESP8266",
+    "ARDUINO_ARCH_ESP8266",
+    "ARDUINO_ESP8266_WEMOS_D1MINI",
+    "ESPHOME_LOG_LEVEL=ESPHOME_LOG_LEVEL_DEBUG",
+    "NEW_OOM_ABORT",
+    "PIO_FRAMEWORK_ARDUINO_LWIP2_HIGHER_BANDWIDTH_LOW_FLASH",
+    "USE_ARDUINO",
+    "USE_ESP8266",
+    "USE_ESP8266_FRAMEWORK_ARDUINO",
+    "USE_STORE_LOG_STR_IN_FLASH",
+    "F_CPU=80000000L",
+    "__ets__",
+    "ICACHE_FLASH",
+    "ARDUINO=10805",
+    "ARDUINO_BOARD=\"PLATFORMIO_D1_MINI\"",
+    "FLASHMODE_DOUT",
+    "LWIP_OPEN_SRC",
+    "NONOSDK22x_190703=1",
+    "TCP_MSS=1460",
+    "LWIP_FEATURES=0",
+    "LWIP_IPV6=0",
+    "VTABLES_IN_FLASH",
+    "MMU_IRAM_SIZE=0x8000",
+    "MMU_ICACHE_SIZE=0x8000"
+  ],
+  "includes": {
+    "build": [
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\include",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\src",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266mDNS\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\DNSServer\\src",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra\\ESPAsyncWebServer-esphome\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266WiFi\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Hash\\src",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra\\ESPAsyncTCP-esphome\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\tools\\sdk\\include",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\cores\\esp8266",
+      "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\include",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\tools\\sdk\\lwip2\\include",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\variants\\d1_mini"
+    ],
+    "compatlib": [
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra\\ESPAsyncTCP-esphome\\src",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra\\ESPAsyncTCP-esphome\\src",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra\\ESPAsyncWebServer-esphome\\src",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra\\ESPAsyncWebServer-esphome\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266WiFi\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Hash\\src",
+      "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.piolibdeps\\terra\\ESPAsyncTCP-esphome\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\DNSServer\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266WiFi\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266mDNS\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Hash\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ArduinoOTA",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\EEPROM",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266AVRISP\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266HTTPClient\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266HTTPUpdateServer\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266LLMNR",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266NetBIOS",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266SSDP",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266SdFat\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266WebServer\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266WiFiMesh\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\ESP8266httpUpdate\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Ethernet\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\GDBStub\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\I2S\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\LittleFS\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Netdump\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\SD\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\SDFS\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\SPI",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\SPISlave\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Servo\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\SoftwareSerial\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\TFT_Touch_Shield_V2",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Ticker\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\Wire",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\esp8266\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\lwIP_PPP\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\lwIP_enc28j60\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\lwIP_w5100\\src",
+      "C:\\Users\\johan\\.platformio\\packages\\framework-arduinoespressif8266\\libraries\\lwIP_w5500\\src"
+    ],
+    "toolchain": [
+      "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\xtensa-lx106-elf\\include\\c++\\10.3.0",
+      "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\xtensa-lx106-elf\\include\\c++\\10.3.0\\xtensa-lx106-elf",
+      "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\lib\\gcc\\xtensa-lx106-elf\\10.3.0\\include",
+      "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\lib\\gcc\\xtensa-lx106-elf\\10.3.0\\include-fixed",
+      "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\xtensa-lx106-elf\\include"
+    ],
+    "unity": []
+  },
+  "cc_path": "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\bin\\xtensa-lx106-elf-gcc.exe",
+  "cxx_path": "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\bin\\xtensa-lx106-elf-g++.exe",
+  "gdb_path": "C:\\Users\\johan\\.platformio\\packages\\toolchain-xtensa\\bin\\xtensa-lx106-elf-gdb.exe",
+  "prog_path": "C:\\code\\private\\bioterio\\firmware_2022\\.esphome\\build\\terra\\.pioenvs\\terra\\firmware.elf",
+  "svd_path": null,
+  "compiler_type": "gcc",
+  "targets": [
+    {
+      "name": "buildfs",
+      "title": "Build Filesystem Image",
+      "description": null,
+      "group": "Platform"
+    },
+    {
+      "name": "size",
+      "title": "Program Size",
+      "description": "Calculate program size",
+      "group": "Platform"
+    },
+    {
+      "name": "upload",
+      "title": "Upload",
+      "description": null,
+      "group": "Platform"
+    },
+    {
+      "name": "uploadfs",
+      "title": "Upload Filesystem Image",
+      "description": null,
+      "group": "Platform"
+    },
+    {
+      "name": "uploadfsota",
+      "title": "Upload Filesystem Image OTA",
+      "description": null,
+      "group": "Platform"
+    },
+    {
+      "name": "erase",
+      "title": "Erase Flash",
+      "description": null,
+      "group": "Platform"
+    },
+    {
+      "name": "compiledb",
+      "title": "Compilation Database",
+      "description": "Generate compilation database `compile_commands.json`",
+      "group": "Advanced"
+    },
+    {
+      "name": "clean",
+      "title": "Clean",
+      "group": "General"
+    },
+    {
+      "name": "cleanall",
+      "title": "Clean All",
+      "group": "General",
+      "description": "Clean a build environment and installed library dependencies"
+    }
+  ],
+  "extra": {
+    "flash_images": []
+  },
+  "cc_flags": "-std=gnu17 -Wpointer-arith -Wno-implicit-function-declaration -Wl,-EL -fno-inline-functions -nostdlib -Wno-nonnull-compare -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -fno-exceptions -Os -mlongcalls -mtext-section-literals -falign-functions=4 -U__STRICT_ANSI__ -D_GNU_SOURCE -ffunction-sections -fdata-sections -Wall -Werror=return-type -free -fipa-pta",
+  "cxx_flags": "-fno-rtti -std=gnu++17 -fno-exceptions -Wno-nonnull-compare -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unused-variable -fno-exceptions -Os -mlongcalls -mtext-section-literals -falign-functions=4 -U__STRICT_ANSI__ -D_GNU_SOURCE -ffunction-sections -fdata-sections -Wall -Werror=return-type -free -fipa-pta"
+}

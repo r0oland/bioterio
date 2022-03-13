@@ -1,0 +1,30 @@
+{
+  "storage_version": 1,
+  "name": "terra",
+  "comment": null,
+  "esphome_version": "2022.2.3",
+  "src_version": 1,
+  "address": "terra.local",
+  "web_port": null,
+  "esp_platform": "esp8266",
+  "build_path": ".\\.esphome/build/terra",
+  "firmware_bin_path": ".\\.esphome/build/terra\\.pioenvs\\terra\\firmware.bin",
+  "loaded_integrations": [
+    "api",
+    "async_tcp",
+    "captive_portal",
+    "esp8266",
+    "esphome",
+    "gpio",
+    "logger",
+    "md5",
+    "mdns",
+    "network",
+    "ota",
+    "preferences",
+    "socket",
+    "switch",
+    "web_server_base",
+    "wifi"
+  ]
+}
