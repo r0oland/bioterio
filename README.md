@@ -1,9 +1,10 @@
 # bioterio
 
-Control and log temperature and humidity in your terrarium, aquarium, plant box or even room...
+Log and display temperature and humidity in your terrarium, aquarium, plant box or if you are totally crazy even your own room...
 
-Notes:
-<https://docs.google.com/document/d/1VFbUjsCdmVdq7fUs_ri-DKLA5AHg0kyQCDKLe1ATKaw/edit?usp=sharing>
+## Detailed Instructions
+
+See https://www.laserhannes.de/ for details one day...
 
 ## Hardware
 
@@ -17,6 +18,12 @@ Notes:
   - compatible to SSD1305???
 - SHT21
   - Humidity and Temperature Sensor IC
+  
+
+## ESP Home
+
+
+
 
 ## Licence Infos
 
